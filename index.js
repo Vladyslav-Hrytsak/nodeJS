@@ -83,6 +83,7 @@ const start = async () =>{
     // await fs.mkdir(path.join('storage', 'asd'), {recursive: true});
     const pathFile = path.join('storage', 'asd', 'myFile.txt');
 
+
     // await fs.writeFile(pathFile, 'hello\n')// перезаписать в файл
     // await fs.appendFile(pathFile, 'hello\n')// записать  в файл
     // const newVar = await fs.readFile(pathFile, { encoding: 'utf8' });
