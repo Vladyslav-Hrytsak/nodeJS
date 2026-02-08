@@ -20,7 +20,26 @@ class UserRepository {
   }
   public async getByID(id: number): Promise<IUser | null> {
     const users = await reader();
-    return users.find((u: any) => u.id === id);
+    return users.find((u: IUser) => u.id === id);
+  }
+  public async putByID(id: number, dto: Partial<IUser>): Promise<IUser | null> {
+    const users = await reader();
+    const index = users.findIndex((u: IUser) => u.id === id);
+    users[index] = {
+      ...users[index],
+      name: dto.name,
+      email: dto.email,
+      password: dto.password,
+    };
+
+    await write(users);
+    return users[index];
+  }
+  public async delByID(id: number): Promise<IUser | null> {
+    const users = await reader();
+    const filteredUsers = users.filter((u: IUser) => u.id !== id);
+    await write(filteredUsers);
+    return users.find((u: IUser) => u.id === id);
   }
 }
 

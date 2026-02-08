@@ -6,10 +6,10 @@ import { userService } from "../services/user.service";
 class UserController {
   public async getList(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = userService.getList;
+      const result = await userService.getList();
       res.json(result);
-    } catch (err) {
-      next(err);
+    } catch (e) {
+      next(e);
     }
   }
 
@@ -27,6 +27,26 @@ class UserController {
     try {
       const userId = Number(req.params.id);
       const result = await userService.getByID(userId);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async putById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = Number(req.params.id);
+      const dto = req.body as IUser;
+      const result = await userService.putByID(userId, dto);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  public async delById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = Number(req.params.id);
+      const result = await userService.delByID(userId);
       res.json(result);
     } catch (err) {
       next(err);
