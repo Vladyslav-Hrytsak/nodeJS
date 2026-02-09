@@ -1,5 +1,5 @@
 import { ApiError } from "../errors/api-error";
-import { IUser } from "../model/UserModel";
+import { IUser } from "../interface/user.interface";
 import { userRepository } from "../repositories/user.repository";
 
 class UserService {
@@ -27,7 +27,7 @@ class UserService {
     return await userRepository.create(dto);
   }
 
-  public async getByID(id: number): Promise<IUser> {
+  public async getByID(id: string): Promise<IUser> {
     const user = await userRepository.getByID(id);
     if (!user) {
       throw new ApiError("User not found", 404);
@@ -35,7 +35,7 @@ class UserService {
     return user;
   }
 
-  public async putByID(id: number, dto: IUser): Promise<IUser> {
+  public async putByID(id: string, dto: IUser): Promise<IUser> {
     if (!dto.name || dto.name.length < 3) {
       throw new ApiError(
         "Name is required and should be at least 3 characters long",
@@ -63,12 +63,8 @@ class UserService {
 
     return updatedUser;
   }
-  public async delByID(id: number): Promise<IUser> {
-    const user = await userRepository.delByID(id);
-    if (!user) {
-      throw new ApiError("User not found", 404);
-    }
-    return user;
+  public async delByID(id: string): Promise<boolean> {
+    return await userRepository.delByID(id);
   }
 }
 

@@ -12,7 +12,9 @@
   },
   "private": true,
   "dependencies": {
-    "express": "^4.19.2"
+    "dotenv": "^17.2.4",
+    "express": "^4.19.2",
+    "mongoose": "^9.1.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
