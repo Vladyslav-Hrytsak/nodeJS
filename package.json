@@ -12,13 +12,17 @@
   },
   "private": true,
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.2.4",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.5.4",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
@@ -29,14 +33,14 @@
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^17.3.0",
     "husky": "^9.1.7",
+    "joi": "^18.0.2",
     "lint-staged": "^15.5.2",
     "nodemon": "^3.1.4",
     "prettier": "^3.8.1",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "tsc-watch": "^6.2.0",
-    "typescript-eslint": "^8.54.0",
-    "joi": "^18.0.2"
+    "typescript-eslint": "^8.54.0"
   },
   "lint-staged": {
     "{src,apps,libs,test}/**/*.ts": "eslint --fix"

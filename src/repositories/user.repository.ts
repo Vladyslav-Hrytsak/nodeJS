@@ -18,6 +18,9 @@ class UserRepository {
     const result = await User.deleteOne({ _id: id }).exec();
     return result.deletedCount > 0;
   }
+  public async getByEmail(email: string): Promise<IUser | null> {
+    return await User.findOne({ email }).select("+password");
+  }
 }
 
 export const userRepository = new UserRepository();
