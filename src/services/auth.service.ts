@@ -1,10 +1,10 @@
+import { ApiError } from "../errors/api-error";
 import { ITokenPair } from "../interface/token.interface";
 import { ISignIn, IUser } from "../interface/user.interface";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
-import {ApiError} from "../errors/api-error";
 
 class AuthService {
   public async signUp(

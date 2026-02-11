@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+import { ITokenPayload } from "../interface/token.interface";
 import { IUser } from "../interface/user.interface";
 import { userService } from "../services/user.service";
 
@@ -23,21 +24,30 @@ class UserController {
     }
   }
 
-  public async putById(req: Request, res: Response, next: NextFunction) {
+  public async getMe(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.params.id;
-      const dto = req.body as IUser;
-      const result = await userService.putByID(userId, dto);
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const result = await userService.getByID(jwtPayload.userId);
       res.json(result);
     } catch (err) {
       next(err);
     }
   }
-  public async delById(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.params.id;
 
-      const isDeleted = await userService.delByID(userId);
+  public async putMe(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const dto = req.body as IUser;
+      const result = await userService.putMe(jwtPayload.userId, dto);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  public async delMe(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const isDeleted = await userService.delMe(jwtPayload.userId);
 
       if (!isDeleted) {
         return res
