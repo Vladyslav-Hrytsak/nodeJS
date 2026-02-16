@@ -38,7 +38,7 @@ class UserController {
     try {
       const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
       const dto = req.body as IUser;
-      const result = await userService.putMe(jwtPayload.userId, dto);
+      const result = await userService.putMe(jwtPayload, dto);
       res.json(result);
     } catch (err) {
       next(err);
@@ -47,7 +47,7 @@ class UserController {
   public async delMe(req: Request, res: Response, next: NextFunction) {
     try {
       const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
-      const isDeleted = await userService.delMe(jwtPayload.userId);
+      const isDeleted = await userService.delMe(jwtPayload);
 
       if (!isDeleted) {
         return res
