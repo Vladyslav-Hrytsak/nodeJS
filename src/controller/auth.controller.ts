@@ -26,15 +26,14 @@ class AuthController {
 
   public async refresh(req: Request, res: Response, next: NextFunction) {
     try {
-      const authHeader = req.headers.authorization;
+      const refreshToken = req.headers.authorization!.split(" ")[1];
 
-      if (!authHeader) {
-        throw new Error("No token provided");
-      }
+      const result = await authService.refresh(
+        refreshToken,
+        res.locals.jwtPayload,
+        res.locals.tokenPair,
+      );
 
-      const refreshToken = authHeader.split(" ")[1];
-
-      const result = await authService.refresh(refreshToken);
       res.status(200).json(result);
     } catch (err) {
       next(err);
