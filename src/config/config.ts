@@ -13,4 +13,7 @@ export const config = {
   JWT_REFRESH_SECRET:
     process.env.JWT_REFRESH_SECRET || "default_refresh_secret",
   JWT_REFRESH_EXPIRATION: process.env.JWT_REFRESH_EXPIRATION || "10d",
+
+  SMTP_EMAIL: process.env.SMTP_EMAIL,
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD,
 };

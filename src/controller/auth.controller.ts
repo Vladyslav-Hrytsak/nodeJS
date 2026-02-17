@@ -40,6 +40,32 @@ class AuthController {
       next(err);
     }
   }
+  public async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        throw new Error("No token provided");
+      }
+      const refreshToken = authHeader.split(" ")[1];
+      await authService.logout(refreshToken);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  }
+  public async logoutAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        throw new Error("No token provided");
+      }
+      const accessToken = authHeader.split(" ")[1];
+      await authService.logoutAll(accessToken);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export const authController = new AuthController();
