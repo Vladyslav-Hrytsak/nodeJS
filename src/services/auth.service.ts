@@ -86,9 +86,6 @@ class AuthService {
       TokenTypeEnum.REFRESH,
     );
 
-    if (!payload) {
-      throw new ApiError("Refresh token is not valid", 401);
-    }
     const storedToken = await tokenRepository.findByParams({
       refreshToken,
     });
@@ -105,9 +102,6 @@ class AuthService {
   }
   public async logoutAll(accessToken: string) {
     const payload = tokenService.verifyToken(accessToken, TokenTypeEnum.ACCESS);
-    if (!payload) {
-      throw new ApiError("Refresh token is not valid", 404);
-    }
     const user = await userRepository.getByID(payload.userId);
 
     await tokenRepository.deleteManyByUserId(payload.userId);
