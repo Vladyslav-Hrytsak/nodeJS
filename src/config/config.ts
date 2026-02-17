@@ -16,4 +16,9 @@ export const config = {
 
   SMTP_EMAIL: process.env.SMTP_EMAIL,
   SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+
+  SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
+  SEND_GRID_TO_EMAIL: process.env.SEND_GRID_TO_EMAIL,
+
+  FRONT_URL: process.env.FRONT_URL,
 };

@@ -1,15 +1,18 @@
 import { EmailTypeEnum } from "../enums/email-type.enum";
-import { EmailPayloadCombined } from "./email-payload-combined.type";
+import { EmailCombinedPayloadType } from "./email-combined-payload.type";
 import { PickRequired } from "./pick-required.type";
 
-export type EmailTypeToPayload = {
-  [EmailTypeEnum.WELCOME]: PickRequired<EmailPayloadCombined, "name">;
-
-  [EmailTypeEnum.FORGOT_PASSWORD]: PickRequired<
-    EmailPayloadCombined,
-    "name" | "email"
+export type emailTypeToPayload = {
+  [EmailTypeEnum.WELCOME]: PickRequired<
+    EmailCombinedPayloadType,
+    "name" | "frontUrl" | "actionToken"
   >;
-
-  [EmailTypeEnum.OLD_VISIT]: PickRequired<EmailPayloadCombined, "email">;
-  [EmailTypeEnum.LOGOUT]: PickRequired<EmailPayloadCombined, "name">;
+  [EmailTypeEnum.DELETE]: PickRequired<
+    EmailCombinedPayloadType,
+    "frontUrl" | "actionToken"
+  >;
+  [EmailTypeEnum.RESET_PASSWORD]: PickRequired<
+    EmailCombinedPayloadType,
+    "frontUrl"
+  >;
 };
