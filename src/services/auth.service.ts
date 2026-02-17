@@ -89,7 +89,6 @@ class AuthService {
     if (!payload) {
       throw new ApiError("Refresh token is not valid", 401);
     }
-
     const storedToken = await tokenRepository.findByParams({
       refreshToken,
     });
