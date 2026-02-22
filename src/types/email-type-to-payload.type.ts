@@ -13,6 +13,6 @@ export type emailTypeToPayload = {
   >;
   [EmailTypeEnum.RESET_PASSWORD]: PickRequired<
     EmailCombinedPayloadType,
-    "frontUrl"
+    "name" | "frontUrl" | "actionToken"
   >;
 };

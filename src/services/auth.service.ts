@@ -1,9 +1,16 @@
 import { config } from "../config/config";
+import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
 import { EmailTypeEnum } from "../enums/email-type.enum";
 import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api-error";
-import { ITokenPair } from "../interface/token.interface";
-import { ISignIn, IUser } from "../interface/user.interface";
+import { ITokenPair, ITokenPayload } from "../interface/token.interface";
+import {
+  IResetPasswordSend,
+  IResetPasswordSet,
+  ISignIn,
+  IUser,
+} from "../interface/user.interface";
+import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
 import { passwordService } from "./password.service";
@@ -109,6 +116,43 @@ class AuthService {
     if (!payload) {
       throw new ApiError("Refresh token is not valid", 404);
     }
+  }
+
+  public async forgotPasswordSendEmail(dto: IResetPasswordSend): Promise<void> {
+    const user = await userRepository.getByEmail(dto.email);
+    if (!user) {
+      throw new ApiError("User not found", 401);
+    }
+    const token = tokenService.generateResetToken(
+      { userId: user._id, role: user.role },
+      ActionTokenTypeEnum.FORGOT_PASSWORD,
+    );
+    await actionTokenRepository.create({
+      token,
+      type: ActionTokenTypeEnum.FORGOT_PASSWORD,
+      _userId: user._id,
+    });
+    await sendGridService.sendByType(user.email, EmailTypeEnum.RESET_PASSWORD, {
+      name: user.name,
+      frontUrl: config.FRONT_URL,
+      actionToken: token,
+    });
+  }
+
+  public async forgotPasswordSet(
+    dto: IResetPasswordSet,
+    jwtPayload: ITokenPayload,
+  ): Promise<void> {
+    const password = await passwordService.hashPassword(dto.password);
+    await userRepository.putByID(jwtPayload.userId, { password });
+
+    await actionTokenRepository.deleteManyByParams({
+      _userId: jwtPayload.userId,
+      type: ActionTokenTypeEnum.FORGOT_PASSWORD,
+    });
+    await actionTokenRepository.deleteManyByParams({
+      _userId: jwtPayload.userId,
+    });
   }
 }
 

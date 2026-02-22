@@ -1,6 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ISignIn, IUser } from "../interface/user.interface";
+import { ITokenPayload } from "../interface/token.interface";
+import {
+  IResetPasswordSend,
+  IResetPasswordSet,
+  ISignIn,
+  IUser,
+} from "../interface/user.interface";
 import { authService } from "../services/auth.service";
 
 class AuthController {
@@ -61,6 +67,34 @@ class AuthController {
       }
       const accessToken = authHeader.split(" ")[1];
       await authService.logoutAll(accessToken);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async forgotPasswordSendEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const dto = req.body as IResetPasswordSend;
+      await authService.forgotPasswordSendEmail(dto);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  }
+  public async forgotPasswordSet(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const dto = req.body as IResetPasswordSet;
+      await authService.forgotPasswordSet(dto, jwtPayload);
       res.status(204).send();
     } catch (err) {
       next(err);

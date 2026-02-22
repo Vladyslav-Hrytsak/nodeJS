@@ -14,4 +14,6 @@ export interface IUser {
   updatedAt?: Date;
 }
 
-export interface ISignIn extends Pick<IUser, "email" | "password"> {}
+export type ISignIn = Pick<IUser, "email" | "password">;
+export type IResetPasswordSend = Pick<IUser, "email">;
+export type IResetPasswordSet = Pick<IUser, "password"> & { token: string };

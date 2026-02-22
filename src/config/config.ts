@@ -21,4 +21,9 @@ export const config = {
   SEND_GRID_TO_EMAIL: process.env.SEND_GRID_TO_EMAIL,
 
   FRONT_URL: process.env.FRONT_URL,
+
+  ACTION_FORGOT_PASSWORD_EXPIRATION:
+    process.env.ACTION_FORGOT_PASSWORD_EXPIRATION || "10h",
+  ACTION_FORGOT_PASSWORD_SECRET:
+    process.env.ACTION_FORGOT_PASSWORD_SECRET || "default_access_secret",
 };

@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { authController } from "../controller/auth.controller";
+import { authMiddleware } from "../middlewares/auth.middleware";
 import { validateMiddleware } from "../middlewares/validate.middelware";
 import { signInValidator, signUpValidator } from "../validators/user.validator";
 
@@ -16,10 +17,21 @@ router.post(
   validateMiddleware.isIdValid(signInValidator),
   authController.signIn,
 );
-router.post("/refresh", authController.refresh);
+router.post(
+  "/refresh",
+  authMiddleware.checkRefreshToken,
+  authController.refresh,
+);
 
 router.post("/logout", authController.logout);
 
 router.post("/logout-all", authController.logoutAll);
+
+router.post("/forgot-password", authController.forgotPasswordSendEmail);
+router.put(
+  "/forgot-password",
+  authMiddleware.checkActionToken,
+  authController.forgotPasswordSet,
+);
 
 export const authRouter = router;

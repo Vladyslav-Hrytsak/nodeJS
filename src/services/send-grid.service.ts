@@ -8,7 +8,7 @@ import { emailTypeToPayload } from "../types/email-type-to-payload.type";
 
 class SendGridService {
   constructor() {
-    SendGrid.setApiKey(process.env.SENDGRID_API_KEY);
+    SendGrid.setApiKey(config.SENDGRID_API_KEY as string);
   }
 
   public async sendByType<T extends EmailTypeEnum>(
@@ -24,6 +24,8 @@ class SendGridService {
         templateId,
         dynamicTemplateData,
       });
+      console.log("FROM:", config.SEND_GRID_TO_EMAIL);
+      console.log("TEMPLATE:", templateId);
     } catch (err) {
       console.error("Error email", err);
     }

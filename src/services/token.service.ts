@@ -1,6 +1,8 @@
 import * as jsonwebtoken from "jsonwebtoken";
+import { SignOptions } from "jsonwebtoken";
 
 import { config } from "../config/config";
+import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
 import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api-error";
 import { ITokenPair, ITokenPayload } from "../interface/token.interface";
@@ -27,6 +29,48 @@ class TokenService {
           secret = config.JWT_REFRESH_SECRET;
       }
       return jsonwebtoken.verify(token, secret) as ITokenPayload;
+    } catch (err) {
+      throw new ApiError("Unable to verify token", 401);
+      console.log(err);
+    }
+  }
+
+  public generateResetToken(
+    payload: ITokenPayload,
+    tokenType: ActionTokenTypeEnum,
+  ): string {
+    let secret: string;
+    let expiration: string;
+
+    switch (tokenType) {
+      case ActionTokenTypeEnum.FORGOT_PASSWORD:
+        secret = config.ACTION_FORGOT_PASSWORD_SECRET;
+        expiration = config.ACTION_FORGOT_PASSWORD_EXPIRATION;
+        break;
+      default:
+        throw new ApiError("Unable to verify token", 401);
+    }
+
+    return jsonwebtoken.sign(payload, secret, {
+      expiresIn: expiration as SignOptions["expiresIn"],
+    });
+  }
+
+  public verifyActionToken(
+    token: string,
+    type: ActionTokenTypeEnum,
+  ): ITokenPayload {
+    try {
+      let secret: string;
+      switch (type) {
+        case ActionTokenTypeEnum.FORGOT_PASSWORD:
+          secret = config.ACTION_FORGOT_PASSWORD_SECRET;
+          break;
+        default:
+          throw new ApiError("Unable to verify token", 401);
+      }
+      return jsonwebtoken.verify(token, secret) as ITokenPayload;
+
     } catch (err) {
       throw new ApiError("Unable to verify token", 401);
       console.log(err);
