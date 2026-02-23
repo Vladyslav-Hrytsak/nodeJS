@@ -9,7 +9,7 @@ class UserRepository {
     return await User.create(dto);
   }
   public async getByID(id: string): Promise<IUser | null> {
-    return await User.findById(id);
+    return await User.findById(id).select("+password");
   }
   public async putByID(id: string, dto: Partial<IUser>): Promise<IUser | null> {
     return await User.findByIdAndUpdate(id, dto, { new: true });

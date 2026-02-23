@@ -2,8 +2,13 @@ import { Router } from "express";
 
 import { authController } from "../controller/auth.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
+import { commonMiddleware } from "../middlewares/common.middleware";
 import { validateMiddleware } from "../middlewares/validate.middelware";
-import { signInValidator, signUpValidator } from "../validators/user.validator";
+import {
+  changePassword,
+  signInValidator,
+  signUpValidator,
+} from "../validators/user.validator";
 
 const router = Router();
 
@@ -33,9 +38,16 @@ router.put(
   authMiddleware.checkActionToken,
   authController.forgotPasswordSet,
 );
+router.post(
+  "/change-password",
+  commonMiddleware.isBodyValid(changePassword),
+  authMiddleware.checkAccessToken,
+  authController.changePassword,
+);
+
 router.put(
   "/verify",
-  authMiddleware. checkVerifyToken,
+  authMiddleware.checkVerifyToken,
   authController.verifyUser,
 );
 

@@ -5,6 +5,7 @@ import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api-error";
 import { ITokenPair, ITokenPayload } from "../interface/token.interface";
 import {
+  IChangePassword,
   IResetPasswordSend,
   IResetPasswordSet,
   ISignIn,
@@ -159,6 +160,25 @@ class AuthService {
       _userId: jwtPayload.userId,
       type: ActionTokenTypeEnum.FORGOT_PASSWORD,
     });
+    await actionTokenRepository.deleteManyByParams({
+      _userId: jwtPayload.userId,
+    });
+  }
+
+  public async changePassword(
+    jwtPayload: ITokenPayload,
+    dto: IChangePassword,
+  ): Promise<void> {
+    const user = await userRepository.getByID(jwtPayload.userId);
+    const isPasswordCorrect = await passwordService.comparePassword(
+      dto.password,
+      user.password,
+    );
+    if (!isPasswordCorrect) {
+      throw new ApiError("Invalid previous password", 401);
+    }
+    const password = await passwordService.hashPassword(dto.newPassword);
+    await userRepository.putByID(jwtPayload.userId, { password });
     await actionTokenRepository.deleteManyByParams({
       _userId: jwtPayload.userId,
     });
