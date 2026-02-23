@@ -100,6 +100,15 @@ class AuthController {
       next(err);
     }
   }
+  public async verifyUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      await authService.verifyUser(jwtPayload);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export const authController = new AuthController();

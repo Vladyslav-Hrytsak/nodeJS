@@ -29,10 +29,19 @@ class AuthService {
     });
     await tokenRepository.create({ ...tokens, _userId: user._id });
 
+    const verifyToken = tokenService.generateResetToken(
+      { userId: user._id, role: user.role },
+      ActionTokenTypeEnum.VERIFY,
+    );
+    await actionTokenRepository.create({
+      token: verifyToken,
+      type: ActionTokenTypeEnum.VERIFY,
+      _userId: user._id,
+    });
     await sendGridService.sendByType(user.email, EmailTypeEnum.WELCOME, {
       name: dto.name,
       frontUrl: config.FRONT_URL,
-      actionToken: "actionToken",
+      actionToken: verifyToken,
     });
 
     return { user, tokens };
@@ -152,6 +161,25 @@ class AuthService {
     });
     await actionTokenRepository.deleteManyByParams({
       _userId: jwtPayload.userId,
+    });
+  }
+
+  public async verifyUser(jwtPayload: ITokenPayload): Promise<void> {
+    const user = await userRepository.getByID(jwtPayload.userId);
+
+    if (!user) {
+      throw new ApiError("User not found", 404);
+    }
+
+    if (user.isVerified) {
+      throw new ApiError("User already verified", 400);
+    }
+
+    await userRepository.verifyUser(jwtPayload.userId);
+
+    await actionTokenRepository.deleteManyByParams({
+      _userId: jwtPayload.userId,
+      type: ActionTokenTypeEnum.VERIFY,
     });
   }
 }

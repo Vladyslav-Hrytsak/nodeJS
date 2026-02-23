@@ -26,4 +26,6 @@ export const config = {
     process.env.ACTION_FORGOT_PASSWORD_EXPIRATION || "10h",
   ACTION_FORGOT_PASSWORD_SECRET:
     process.env.ACTION_FORGOT_PASSWORD_SECRET || "default_access_secret",
+  ACTION_VERIFY_EXPIRATION: process.env.ACTION_VERIFY_EXPIRATION,
+  ACTION_VERIFY_SECRET: process.env.ACTION_VERIFY_SECRET,
 };

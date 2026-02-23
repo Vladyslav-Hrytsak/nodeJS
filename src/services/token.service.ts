@@ -49,6 +49,10 @@ class TokenService {
         break;
       default:
         throw new ApiError("Unable to verify token", 401);
+
+      case ActionTokenTypeEnum.VERIFY:
+        secret = config.ACTION_VERIFY_SECRET;
+        expiration = config.ACTION_VERIFY_EXPIRATION;
     }
 
     return jsonwebtoken.sign(payload, secret, {
@@ -68,9 +72,10 @@ class TokenService {
           break;
         default:
           throw new ApiError("Unable to verify token", 401);
+        case ActionTokenTypeEnum.VERIFY:
+          secret = config.ACTION_VERIFY_SECRET;
       }
       return jsonwebtoken.verify(token, secret) as ITokenPayload;
-
     } catch (err) {
       throw new ApiError("Unable to verify token", 401);
       console.log(err);
