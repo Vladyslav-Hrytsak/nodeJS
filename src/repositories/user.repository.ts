@@ -24,6 +24,12 @@ class UserRepository {
   public async verifyUser(id: string): Promise<void> {
     await User.findByIdAndUpdate(id, { isVerified: true });
   }
+
+  public async getInactiveUsers(activeIds: string[]): Promise<IUser[]> {
+    return await User.find({
+      _id: { $nin: activeIds },
+    });
+  }
 }
 
 export const userRepository = new UserRepository();

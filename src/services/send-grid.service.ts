@@ -24,8 +24,6 @@ class SendGridService {
         templateId,
         dynamicTemplateData,
       });
-      console.log("FROM:", config.SEND_GRID_TO_EMAIL);
-      console.log("TEMPLATE:", templateId);
     } catch (err) {
       console.error("Error email", err);
     }

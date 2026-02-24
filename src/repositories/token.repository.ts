@@ -23,6 +23,13 @@ class TokenRepository {
     });
     return deletedCount;
   }
+  public async getActiveUserIds(sinceDate: Date): Promise<string[]> {
+    const activeUserIds = await Token.find({
+      updatedAt: { $gte: sinceDate },
+    }).distinct("_userId");
+
+    return activeUserIds.map((id) => id.toString());
+  }
 }
 
 export const tokenRepository = new TokenRepository();
