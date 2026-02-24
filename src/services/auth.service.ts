@@ -166,7 +166,7 @@ class AuthService {
     );
 
     if (isSameAsCurrent) {
-      throw new ApiError("New password must differ from current password", 400);
+      throw new ApiError("New password must differ from current password", 409);
     }
 
     const oldPasswords = await oldPasswordRepository.getByUserId(
@@ -182,7 +182,7 @@ class AuthService {
       if (isSame) {
         throw new ApiError(
           "You cannot reuse one of your previous passwords",
-          400,
+          409,
         );
       }
     }
@@ -229,7 +229,7 @@ class AuthService {
     );
 
     if (isSameAsCurrent) {
-      throw new ApiError("New password must differ from current password", 400);
+      throw new ApiError("New password must differ from current password", 409);
     }
 
     const oldPasswords = await oldPasswordRepository.getByUserId(
@@ -245,7 +245,7 @@ class AuthService {
       if (isSame) {
         throw new ApiError(
           "You cannot reuse one of your previous passwords",
-          400,
+          409,
         );
       }
     }
@@ -259,6 +259,9 @@ class AuthService {
 
     await userRepository.putByID(jwtPayload.userId, {
       password: hashedPassword,
+    });
+    await actionTokenRepository.deleteManyByParams({
+      _userId: jwtPayload.userId,
     });
   }
 
