@@ -30,6 +30,14 @@ class UserRepository {
       _id: { $nin: activeIds },
     });
   }
+
+  public async unsetAvatar(userId: string): Promise<IUser> {
+    return await User.findByIdAndUpdate(
+      userId,
+      { $unset: { avatar: "" } },
+      { new: true },
+    ).lean();
+  }
 }
 
 export const userRepository = new UserRepository();

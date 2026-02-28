@@ -2,17 +2,28 @@ import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
 class FileMiddleware {
-  public isFileValid() {
+  public isFileValid(maxSizeMb: number = 5) {
+    const MAX_SIZE = maxSizeMb * 1024 * 1024;
+
     return (req: Request, res: Response, next: NextFunction) => {
       if (!req.files || !req.files.avatar) {
-        return res.status(400).json({ message: "File is required" }); // RETURN прерывает выполнение!
+        return res.status(400).json({ message: "File is required" });
       }
 
       const avatar = req.files.avatar as UploadedFile;
 
-      // 2. Проверяем тип файла
       if (!avatar.mimetype.startsWith("image/")) {
-        return res.status(400).json({ message: "Only images are allowed" }); // Снова RETURN
+        return res.status(400).json({ message: "Only images are allowed" });
+      }
+
+      if (avatar.size > MAX_SIZE) {
+        return res.status(400).json({
+          message: `File is too large. Max size is ${maxSizeMb}MB`,
+        });
+      }
+
+      if (avatar.size === 0) {
+        return res.status(400).json({ message: "File is empty" });
       }
 
       next();

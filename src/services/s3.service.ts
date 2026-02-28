@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import {
+  DeleteObjectCommand,
   ObjectCannedACL,
   PutObjectCommand,
   S3Client,
@@ -45,12 +46,26 @@ class S3Service {
     }
   }
 
+  public async deleteFile(filePath: string): Promise<void> {
+    try {
+      await this.client.send(
+        new DeleteObjectCommand({
+          Bucket: config.AWS_S3_BUCKET_NAME,
+          Key: filePath,
+        }),
+      );
+    } catch (error) {
+      console.error("Error deleting file from S3: ", error);
+      throw error;
+    }
+  }
+
   private buildPath(
     itemType: FileItemTypeEnum,
     itemId: string,
     fileName: string,
   ): string {
-    return `${itemType}/${itemId}/${randomUUID()}${path.extname(fileName)}`; // use only  template string
+    return `${itemType}/${itemId}/${randomUUID()}${path.extname(fileName)}`;
   }
 }
 export const s3Service = new S3Service();
