@@ -29,4 +29,11 @@ export const config = {
     process.env.ACTION_FORGOT_PASSWORD_SECRET || "default_access_secret",
   ACTION_VERIFY_EXPIRATION: process.env.ACTION_VERIFY_EXPIRATION,
   ACTION_VERIFY_SECRET: process.env.ACTION_VERIFY_SECRET,
+
+  AWS_S3_ACCESS_KEY: process.env.AWS_S3_ACCESS_KEY,
+  AWS_S3_SECRET_KEY: process.env.AWS_S3_SECRET_KEY,
+  AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME,
+  AWS_S3_REGION: process.env.AWS_S3_REGION,
+  AWS_S3_ACL: process.env.AWS_S3_ACL,
+  AWS_S3_ENDPOINT: process.env.AWS_S3_ENDPOINT,
 };
