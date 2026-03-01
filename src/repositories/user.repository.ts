@@ -1,9 +1,23 @@
-import { IUser } from "../interface/user.interface";
+import * as mongoose from "mongoose";
+
+import { IUser, IUserListQuery } from "../interface/user.interface";
 import { User } from "../models/user.model";
 
 class UserRepository {
-  public async getList(): Promise<IUser[]> {
-    return await User.find({});
+  public async getList(query: IUserListQuery): Promise<[IUser[], number]> {
+    const filterObject: mongoose.QueryFilter<IUser> = { isVerified: true };
+    if (query.search) {
+      filterObject.name = { $redex: query.search, options: "i" };
+      // filterObject.$or = [
+      //   { name: { $regex: query.search, $options: "i" } },
+      //   { email: { $regex: query.search, $options: "i" } },
+      // ];
+    }
+    const skip = query.limit * (query.page - 1);
+    return await Promise.all([
+      User.find(filterObject).limit(query.limit).skip(skip),
+      User.countDocuments(filterObject),
+    ]);
   }
   public async create(dto: Partial<IUser>): Promise<IUser> {
     return await User.create(dto);

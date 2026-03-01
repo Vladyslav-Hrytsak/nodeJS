@@ -1,5 +1,8 @@
 import Joi from "joi";
 
+import { OrderEnum } from "../enums/order.enum";
+import { UserListOrderByEnum } from "../enums/user-list-order-by.enum";
+
 export const signUpValidator = Joi.object({
   name: Joi.string().min(4).required().messages({
     "string.min": "name is too short",
@@ -72,4 +75,12 @@ export const changePassword = Joi.object({
       "string.pattern.base":
         "The password can only contain Latin letters and numbers.",
     }),
+});
+
+export const listQuery = Joi.object({
+  limit: Joi.number().min(1).max(100).default(10),
+  page: Joi.number().min(1).default(1),
+  search: Joi.string().trim().lowercase(),
+  order: Joi.string().valid(...Object.values(OrderEnum)),
+  orderBy: Joi.string().valid(...Object.values(UserListOrderByEnum)),
 });
