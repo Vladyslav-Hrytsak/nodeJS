@@ -62,7 +62,7 @@ class UserService {
     const user = await userRepository.getByID(jwtPayload.userId);
     if (user.avatar) {
       await s3Service.deleteFile(user.avatar);
-      return await userRepository.unsetAvatar(jwtPayload.userId);
+      return await userRepository.putByID(user._id, { avatar: null });
     }
     return user;
   }
