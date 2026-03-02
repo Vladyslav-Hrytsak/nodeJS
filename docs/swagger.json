@@ -1,0 +1,405 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NodeJS Study API",
+    "version": "1.0.0",
+    "description": "Authentication & User management API with JWT, Refresh Tokens, Avatar upload, Forgot Password and Email Verification flow."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    { "name": "Auth" },
+    { "name": "Users" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "69a59492c0e9997e8ecff8ed" },
+          "name": { "type": "string", "example": "Maksym" },
+          "age": { "type": "integer", "example": 19 },
+          "email": { "type": "string", "example": "user@gmail.com" },
+          "avatar": { "type": "string", "nullable": true },
+          "role": { "type": "string", "example": "user" },
+          "isVerified": { "type": "boolean", "example": false },
+          "isDeleted": { "type": "boolean", "example": false },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "user": { "$ref": "#/components/schemas/User" },
+          "tokens": {
+            "type": "object",
+            "properties": {
+              "accessToken": { "type": "string" },
+              "refreshToken": { "type": "string" }
+            }
+          }
+        }
+      },
+      "PaginationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/User" }
+          },
+          "total": { "type": "integer" },
+          "page": { "type": "integer" },
+          "limit": { "type": "integer" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" }
+        }
+      }
+    }
+  },
+
+  "paths": {
+
+    "/auth/sign-up": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/User" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/auth/sign-in": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "email": "user@gmail.com",
+                "password": "password123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh tokens",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "New token pair",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logout current session",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "204": { "description": "Logged out" }
+        }
+      }
+    },
+
+    "/auth/logout-all": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logout all sessions",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "204": { "description": "All sessions logged out" }
+        }
+      }
+    },
+
+    "/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Send forgot password email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": { "email": "user@gmail.com" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Email sent" }
+        }
+      },
+      "put": {
+        "tags": ["Auth"],
+        "summary": "Set new password via token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "token": "action-token",
+                "password": "newPassword123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Password changed" }
+        }
+      }
+    },
+
+    "/auth/change-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Change password (authorized)",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "oldPassword": "oldPass123",
+                "newPassword": "newPass123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Password changed" }
+        }
+      }
+    },
+
+    "/auth/verify": {
+      "put": {
+        "tags": ["Auth"],
+        "summary": "Verify email via token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "token": "verify-token"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Email verified" }
+        }
+      }
+    },
+
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get users list",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"] } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Users list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PaginationResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/users/me": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get current user",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Current user",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update current user",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "name": "Updated Name",
+                "age": 25
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated user",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete current user",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "204": { "description": "Deleted" }
+        }
+      }
+    },
+
+    "/users/me/avatar": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Upload avatar",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Avatar uploaded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/users/me/delete-avatar": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Delete avatar",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "Avatar removed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/users/{userId}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user by ID",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
